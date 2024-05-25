@@ -1,4 +1,4 @@
-package com.isoft.mtax.auth.models;
+package com.isoft.mtax.entity;
 
 import java.time.LocalDateTime;
 
