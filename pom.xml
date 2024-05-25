@@ -9,8 +9,8 @@
 		<version>3.1.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.bezkoder</groupId>
-	<artifactId>spring-boot-security-postgresql</artifactId>
+	<groupId>com.isoft</groupId>
+	<artifactId>isoft-tax-product</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Tax-Consultency-Management</name>
 	<description>Spring Boot, Spring Security, PostgreSQL: JWT Authentication &amp; Authorization example</description>
