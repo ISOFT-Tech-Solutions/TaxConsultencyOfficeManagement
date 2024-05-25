@@ -1,10 +1,15 @@
 package com.isoft.mtax.auth.models;
 
+import java.util.Set;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,8 +19,9 @@ import jakarta.validation.constraints.Size;
 @Table(name = "isoft_Org")
 public class Morganization extends BaseEntity {
 	@Id
+	@Column(name = "ORG_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long orgId;
 
 	@NotBlank
 	@Size(max = 100)
@@ -61,5 +67,8 @@ public class Morganization extends BaseEntity {
 	@Size(max = 100)
 	@Column(name = "ORG_ADDRESS")
 	private String address;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private Set<Employee> underEmployees;
 
 }
