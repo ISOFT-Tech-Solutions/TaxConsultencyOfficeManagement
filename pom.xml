@@ -13,7 +13,7 @@
 	<artifactId>isoft-tax-product</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Tax-Consultency-Management</name>
-	<description>Spring Boot, Spring Security, PostgreSQL: JWT Authentication &amp; Authorization example</description>
+	<description>Product for Tax Consultency Office Management</description>
 
 	<properties>
 		<java.version>17</java.version>
