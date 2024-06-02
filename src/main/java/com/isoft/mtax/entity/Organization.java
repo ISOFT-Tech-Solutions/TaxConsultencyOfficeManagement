@@ -16,8 +16,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "isoft_Org")
-public class Morganization extends BaseEntity {
+@Table(name = "Organization")
+public class Organization extends BaseEntity {
 	@Id
 	@Column(name = "ORG_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
