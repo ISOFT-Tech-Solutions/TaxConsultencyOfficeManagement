@@ -58,5 +58,5 @@ public class Employee extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "orgId")
-	Morganization org;
+    Organization org;
 }
