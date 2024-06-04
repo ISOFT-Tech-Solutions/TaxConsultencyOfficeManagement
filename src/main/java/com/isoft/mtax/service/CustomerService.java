@@ -1,4 +1,13 @@
 package com.isoft.mtax.service;
 
-public class CustomerService {
+import com.isoft.mtax.entity.TDSCustomer;
+
+import java.util.List;
+
+public interface CustomerService {
+    TDSCustomer addTDSCustomer(TDSCustomer tdsCustomer);
+
+
+
+    List<TDSCustomer> tdsCustomers();
 }
