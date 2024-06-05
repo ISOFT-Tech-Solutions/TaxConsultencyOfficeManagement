@@ -31,7 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<TDSCustomer> findByAddress_City(String city) {
-        System.out.println("Service Impl findByAddress_City");
+
         return customerRepo.findByAddress_City(city);
     }
 }
