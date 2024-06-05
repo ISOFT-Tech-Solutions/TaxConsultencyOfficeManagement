@@ -24,7 +24,6 @@ public class TDSCustomer {
     private String phoneNo;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id",referencedColumnName = "id")
-
     private Address address;
 
 

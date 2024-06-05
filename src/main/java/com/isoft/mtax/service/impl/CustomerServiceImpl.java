@@ -22,4 +22,16 @@ public class CustomerServiceImpl implements CustomerService {
     public List<TDSCustomer> tdsCustomers() {
         return customerRepo.findAll();
     }
+
+    @Override
+    public TDSCustomer tdsCustomerBasedOnTanNumber(String tanNumber) {
+
+        return customerRepo.findByTanNumber(tanNumber);
+    }
+
+    @Override
+    public List<TDSCustomer> findByAddress_City(String city) {
+        System.out.println("Service Impl findByAddress_City");
+        return customerRepo.findByAddress_City(city);
+    }
 }
