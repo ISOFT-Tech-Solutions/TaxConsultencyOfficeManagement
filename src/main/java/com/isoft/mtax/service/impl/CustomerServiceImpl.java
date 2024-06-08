@@ -48,6 +48,30 @@ public class CustomerServiceImpl implements CustomerService {
                     tdsCustomer.setPan(updatedTDSCustomer.getPan());
                     tdsCustomer.setEmail(updatedTDSCustomer.getEmail());
                     return customerRepo.save(tdsCustomer);
-                }).orElseThrow(()-> new ResourceNotFoundException("TDS Customer Not found with "+id));
+                }).orElseThrow(()-> new ResourceNotFoundException("TDS Customer Not found with id : "+id));
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    public TDSCustomer deactivateTdsCustomer(Long id) {
+        TDSCustomer tdsCustomer=customerRepo.findById(id).orElseThrow(() ->new ResourceNotFoundException("TDS Customer not found with id : "+id));
+        tdsCustomer.setActive(false);
+        customerRepo.save(tdsCustomer);
+        return tdsCustomer;
+    }
+
+    /**
+     * @param id
+     * @return TDS Customer
+     */
+    @Override
+    public TDSCustomer restoreTdsCustomer(Long id) {
+        TDSCustomer tdsCustomer=customerRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("TDS Customer not found with id : "+id));
+        tdsCustomer.setActive(true);
+        customerRepo.save(tdsCustomer);
+        return tdsCustomer;
     }
 }

@@ -16,4 +16,8 @@ public interface CustomerService {
     List<TDSCustomer> findTdsCustomerByAddressCity(String city);
 
     TDSCustomer updateTDSCustomer(Long id, TDSCustomer updatedTDSCustomer);
+
+    TDSCustomer deactivateTdsCustomer(Long id);
+
+    TDSCustomer restoreTdsCustomer(Long id);
 }

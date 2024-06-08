@@ -87,5 +87,15 @@ public class CustomerController {
 
 
     }
+    @DeleteMapping("/tds-customers/{id}")
+    public ResponseEntity<?> deactivateTdsCustomer(@PathVariable Long id){
+        TDSCustomer tdsCustomer=customerService.deactivateTdsCustomer(id);
+        return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getTdsCustomerName()+" Deactivated Succussfully",HttpStatus.OK);
+    }
+    @PutMapping("/restore/tds-customers/{id}")
+    public ResponseEntity<?> restoreTdsCustomer(@PathVariable Long id){
+        TDSCustomer tdsCustomer=customerService.restoreTdsCustomer(id);
+        return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getTdsCustomerName()+" Restored  Succussfully",HttpStatus.OK);
+    }
 
 }

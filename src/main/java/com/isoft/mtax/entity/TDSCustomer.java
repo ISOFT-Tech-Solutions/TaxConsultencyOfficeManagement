@@ -22,6 +22,7 @@ public class TDSCustomer {
     private String email;
     private String mobile;
     private String phoneNo;
+    private boolean active =true;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id",referencedColumnName = "id")
     private Address address;
