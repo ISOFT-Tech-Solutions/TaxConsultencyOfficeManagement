@@ -40,7 +40,7 @@ public class CustomerController {
      * @return TDS Customer List Data
      */
     @GetMapping ("/tds-customers")
-    public ResponseEntity<?> tdsCustomers(@RequestParam(required = false) String city){
+    public ResponseEntity<?> tdsCustomers(@RequestParam(required = false,defaultValue = "bhabua") String city){
         log.info("tds customer "+city);
         List<TDSCustomer> tdsCustomerList=new ArrayList<>();
         if(city!=null){
