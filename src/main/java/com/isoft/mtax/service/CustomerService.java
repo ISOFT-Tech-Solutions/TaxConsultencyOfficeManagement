@@ -13,5 +13,7 @@ public interface CustomerService {
 
     TDSCustomer tdsCustomerBasedOnTanNumber(String tanNumber);
 
-    List<TDSCustomer> findByAddress_City(String city);
+    List<TDSCustomer> findTdsCustomerByAddressCity(String city);
+
+    TDSCustomer updateTDSCustomer(Long id, TDSCustomer updatedTDSCustomer);
 }

@@ -7,7 +7,6 @@ import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,11 +39,11 @@ public class CustomerController {
      * @return TDS Customer List Data
      */
     @GetMapping ("/tds-customers")
-    public ResponseEntity<?> tdsCustomers(@RequestParam(required = false,defaultValue = "bhabua") String city){
+    public ResponseEntity<?> tdsCustomers(@RequestParam(required = false) String city){
         log.info("tds customer "+city);
         List<TDSCustomer> tdsCustomerList=new ArrayList<>();
         if(city!=null){
-            List<TDSCustomer> tdsCustomersByCity =customerService.findByAddress_City(city);
+            List<TDSCustomer> tdsCustomersByCity =customerService.findTdsCustomerByAddressCity(city);
             return ResponseEntity.ok(tdsCustomersByCity);
         }
         else {
@@ -66,13 +65,26 @@ public class CustomerController {
      */
     @GetMapping("/tds-customers/{tan-number}")
     public ResponseEntity<?> tdsCustomerBasedOnTanNumber(@PathVariable("tan-number") String tanNumber) {
-        log.info("tqanNumber"+tanNumber);
+        log.info("tanNumber   "+tanNumber);
 
         TDSCustomer tdsCustomer=customerService.tdsCustomerBasedOnTanNumber(tanNumber);
         if(tdsCustomer==null){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(tdsCustomer);
+
+    }
+
+    /**
+     * Update TDS Customer
+     * @param id
+     * @return
+     */
+    @PutMapping("/tds-customers/{id}")
+    public ResponseEntity<?> updateTdsCustomer(@PathVariable Long id, @RequestBody TDSCustomer updatedTDSCustomer){
+        TDSCustomer updatedTdsCustomer =customerService.updateTDSCustomer(id,updatedTDSCustomer);
+        return new  ResponseEntity<>(updatedTdsCustomer,HttpStatus.OK);
+
 
     }
 
