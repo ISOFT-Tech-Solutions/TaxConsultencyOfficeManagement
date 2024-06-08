@@ -2,12 +2,14 @@ package com.isoft.mtax.controller;
 
 import com.isoft.mtax.entity.TDSCustomer;
 import com.isoft.mtax.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,7 +18,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/mtax")
+@Validated
 @Log4j2
+
 public class CustomerController {
 
     @Autowired
@@ -28,7 +32,7 @@ public class CustomerController {
      * @return Added Customer Detail with Status Created
      */
     @PostMapping("/tds-customers")
-    public ResponseEntity<?> addTDSCustomer(@RequestBody TDSCustomer tdsCustomer){
+    public ResponseEntity<?> addTDSCustomer(@Valid  @RequestBody TDSCustomer tdsCustomer){
       TDSCustomer customer =customerService.addTDSCustomer(tdsCustomer);
       return new ResponseEntity<>(customer, HttpStatus.CREATED);
     }
