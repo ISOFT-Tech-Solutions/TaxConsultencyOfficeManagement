@@ -10,4 +10,8 @@ public interface CustomerService {
 
 
     List<TDSCustomer> tdsCustomers();
+
+    TDSCustomer tdsCustomerBasedOnTanNumber(String tanNumber);
+
+    List<TDSCustomer> findByAddress_City(String city);
 }
