@@ -27,14 +27,14 @@ public class CustomerController {
     CustomerService customerService;
 
     /**
-     * Add TDS Customer
+     * Added  TDS Customer
      * @param tdsCustomer
      * @return Added Customer Detail with Status Created
      */
     @PostMapping("/tds-customers")
     public ResponseEntity<?> addTDSCustomer(@Valid  @RequestBody TDSCustomer tdsCustomer){
       TDSCustomer customer =customerService.addTDSCustomer(tdsCustomer);
-      return new ResponseEntity<>(customer, HttpStatus.CREATED);
+      return new ResponseEntity<>(customer.getTdsCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
     }
 
     /**

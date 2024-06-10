@@ -1,5 +1,6 @@
 package com.isoft.mtax.service.impl;
 
+import com.isoft.mtax.dto.EmailDetails;
 import com.isoft.mtax.entity.TDSCustomer;
 import com.isoft.mtax.exception.ResourceNotFoundException;
 import com.isoft.mtax.repo.CustomerRepo;
@@ -15,10 +16,17 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
-    CustomerRepo customerRepo;
+    private CustomerRepo customerRepo;
+    @Autowired
+    KafkaProducerService kafkaProducerService;
+
     @Override
+    @Transactional
     public TDSCustomer addTDSCustomer(TDSCustomer tdsCustomer) {
-        return customerRepo.save(tdsCustomer);
+        TDSCustomer addedTdsCustomer=customerRepo.save(tdsCustomer);
+
+         sendNewCustomerNotification(addedTdsCustomer);
+        return addedTdsCustomer;
     }
 
     @Override
@@ -73,5 +81,23 @@ public class CustomerServiceImpl implements CustomerService {
         tdsCustomer.setActive(true);
         customerRepo.save(tdsCustomer);
         return tdsCustomer;
+    }
+
+    /**
+     * 
+     * @param tdsCustomer
+     */
+    private  void sendNewCustomerNotification(TDSCustomer tdsCustomer) {
+        EmailDetails emailDetails=new EmailDetails();
+        emailDetails.setTo(tdsCustomer.getEmail()); // Email recipient
+
+        String text = "We are delighted to welcome +"+tdsCustomer.getTdsCustomerName()+" to Maa Mundeswari Tax Consultancy \n\n" +
+                "Thank you for choosing us as your trusted partner for tax consultancy services.";
+
+        emailDetails.setSubject("Welcome to Maa Mundeswari Tax Consultancy – Your Trusted Tax Consultancy Partner");
+        emailDetails.setBody(text);
+        kafkaProducerService.sendMessage(emailDetails);
+
+
     }
 }

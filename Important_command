@@ -1,0 +1,10 @@
+-- Start Kafka Server
+./bin/windows/kafka-server-start.bat ./config/server.properties
+--Start Zookeeper
+./bin/windows/zookeeper-server-start.bat ./config/zookeeper.properties
+
+-- Create Topic
+./bin/windows/kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic email_topic --from-beginning
+-- Check created Topic
+
+./bin/windows/kafka-topics.bat --list --bootstrap-server localhost:9092
