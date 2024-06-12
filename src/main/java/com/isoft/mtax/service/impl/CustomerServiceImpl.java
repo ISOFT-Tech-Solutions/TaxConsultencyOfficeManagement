@@ -1,10 +1,13 @@
 package com.isoft.mtax.service.impl;
 
 import com.isoft.mtax.dto.EmailDetails;
+import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 import com.isoft.mtax.exception.ResourceNotFoundException;
-import com.isoft.mtax.repo.CustomerRepo;
+import com.isoft.mtax.repo.GstCustomerRepo;
+import com.isoft.mtax.repo.TdsCustomerRepo;
 import com.isoft.mtax.service.CustomerService;
+import com.isoft.mtax.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,88 +19,88 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
-    private CustomerRepo customerRepo;
+    private TdsCustomerRepo tdsCustomerRepo;
     @Autowired
-    KafkaProducerService kafkaProducerService;
+    private MailService mailService;
+    @Autowired
+    private GstCustomerRepo gstCustomerRepo;
 
     @Override
     @Transactional
     public TDSCustomer addTDSCustomer(TDSCustomer tdsCustomer) {
-        TDSCustomer addedTdsCustomer=customerRepo.save(tdsCustomer);
+        TDSCustomer addedTdsCustomer= tdsCustomerRepo.save(tdsCustomer);
 
-         sendNewCustomerNotification(addedTdsCustomer);
+         mailService.sendEmailNotification(addedTdsCustomer);
         return addedTdsCustomer;
     }
 
     @Override
     public List<TDSCustomer> tdsCustomers() {
-        return customerRepo.findAll();
+        return tdsCustomerRepo.findAll();
     }
 
     @Override
     public TDSCustomer tdsCustomerBasedOnTanNumber(String tanNumber) {
 
-        return customerRepo.findByTanNumber(tanNumber);
+        return tdsCustomerRepo.findByTanNumber(tanNumber);
     }
 
     @Override
     public List<TDSCustomer> findTdsCustomerByAddressCity(String city) {
 
-        return customerRepo.findTdsCustomerByCity(city);
+        return tdsCustomerRepo.findTdsCustomerByCity(city);
     }
 
     @Override
     @Transactional
     public TDSCustomer updateTDSCustomer(Long id, TDSCustomer updatedTDSCustomer) {
-        return customerRepo.findById(id)
+        return tdsCustomerRepo.findById(id)
                 .map(tdsCustomer -> {
-                    tdsCustomer.setTdsCustomerName(updatedTDSCustomer.getTdsCustomerName());
+                    tdsCustomer.setCustomerName(updatedTDSCustomer.getCustomerName());
                     tdsCustomer.setMobile(updatedTDSCustomer.getMobile());
                     tdsCustomer.setPan(updatedTDSCustomer.getPan());
                     tdsCustomer.setEmail(updatedTDSCustomer.getEmail());
-                    return customerRepo.save(tdsCustomer);
+                    return tdsCustomerRepo.save(tdsCustomer);
                 }).orElseThrow(()-> new ResourceNotFoundException("TDS Customer Not found with id : "+id));
     }
 
     /**
+     * Deactivate TDS Customer
      * @param id
      * @return
      */
     @Override
     public TDSCustomer deactivateTdsCustomer(Long id) {
-        TDSCustomer tdsCustomer=customerRepo.findById(id).orElseThrow(() ->new ResourceNotFoundException("TDS Customer not found with id : "+id));
+        TDSCustomer tdsCustomer= tdsCustomerRepo.findById(id).orElseThrow(() ->new ResourceNotFoundException("TDS Customer not found with id : "+id));
         tdsCustomer.setActive(false);
-        customerRepo.save(tdsCustomer);
+        tdsCustomerRepo.save(tdsCustomer);
         return tdsCustomer;
     }
 
     /**
+     * Restore TDS Customer
      * @param id
      * @return TDS Customer
      */
     @Override
     public TDSCustomer restoreTdsCustomer(Long id) {
-        TDSCustomer tdsCustomer=customerRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("TDS Customer not found with id : "+id));
+        TDSCustomer tdsCustomer= tdsCustomerRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("TDS Customer not found with id : "+id));
         tdsCustomer.setActive(true);
-        customerRepo.save(tdsCustomer);
+        tdsCustomerRepo.save(tdsCustomer);
         return tdsCustomer;
     }
 
     /**
-     * 
-     * @param tdsCustomer
+     * Add GST Customer
+     * @param gstCustomer
+     * @return GSTCustomer
      */
-    private  void sendNewCustomerNotification(TDSCustomer tdsCustomer) {
-        EmailDetails emailDetails=new EmailDetails();
-        emailDetails.setTo(tdsCustomer.getEmail()); // Email recipient
-
-        String text = "We are delighted to welcome +"+tdsCustomer.getTdsCustomerName()+" to Maa Mundeswari Tax Consultancy \n\n" +
-                "Thank you for choosing us as your trusted partner for tax consultancy services.";
-
-        emailDetails.setSubject("Welcome to Maa Mundeswari Tax Consultancy – Your Trusted Tax Consultancy Partner");
-        emailDetails.setBody(text);
-        kafkaProducerService.sendMessage(emailDetails);
-
-
+    @Transactional
+    @Override
+    public GSTCustomer addGstCustomer(GSTCustomer gstCustomer) {
+        GSTCustomer addedGstCustomer =gstCustomerRepo.save(gstCustomer);
+        mailService.sendEmailNotification(addedGstCustomer);
+        return gstCustomerRepo.save(gstCustomer);
     }
+
 }

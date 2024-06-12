@@ -1,5 +1,6 @@
 package com.isoft.mtax.service;
 
+import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface CustomerService {
     TDSCustomer deactivateTdsCustomer(Long id);
 
     TDSCustomer restoreTdsCustomer(Long id);
+
+    GSTCustomer addGstCustomer(GSTCustomer gstCustomer);
 }
