@@ -1,5 +1,6 @@
 package com.isoft.mtax.controller;
 
+import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 import com.isoft.mtax.service.CustomerService;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class CustomerController {
     @PostMapping("/tds-customers")
     public ResponseEntity<?> addTDSCustomer(@Valid  @RequestBody TDSCustomer tdsCustomer){
       TDSCustomer customer =customerService.addTDSCustomer(tdsCustomer);
-      return new ResponseEntity<>(customer.getTdsCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
+      return new ResponseEntity<>(customer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
     }
 
     /**
@@ -94,12 +95,23 @@ public class CustomerController {
     @DeleteMapping("/tds-customers/{id}")
     public ResponseEntity<?> deactivateTdsCustomer(@PathVariable Long id){
         TDSCustomer tdsCustomer=customerService.deactivateTdsCustomer(id);
-        return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getTdsCustomerName()+" Deactivated Succussfully",HttpStatus.OK);
+        return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getCustomerName()+" Deactivated Succussfully",HttpStatus.OK);
     }
     @PutMapping("/restore/tds-customers/{id}")
     public ResponseEntity<?> restoreTdsCustomer(@PathVariable Long id){
         TDSCustomer tdsCustomer=customerService.restoreTdsCustomer(id);
-        return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getTdsCustomerName()+" Restored  Succussfully",HttpStatus.OK);
+        return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getCustomerName()+" Restored  Succussfully",HttpStatus.OK);
+    }
+
+    /**
+     * Added GST Customer
+     * @param gstCustomer
+     * @return
+     */
+    @PostMapping("/gst-customers")
+    public ResponseEntity<?> addTDSCustomer(@RequestBody GSTCustomer gstCustomer){
+        GSTCustomer addedGstCustomer =customerService.addGstCustomer(gstCustomer);
+        return new ResponseEntity<>(addedGstCustomer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
     }
 
 }
