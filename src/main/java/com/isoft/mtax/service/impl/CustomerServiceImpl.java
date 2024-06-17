@@ -1,6 +1,5 @@
 package com.isoft.mtax.service.impl;
 
-import com.isoft.mtax.dto.EmailDetails;
 import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 import com.isoft.mtax.exception.ResourceNotFoundException;
@@ -8,14 +7,17 @@ import com.isoft.mtax.repo.GstCustomerRepo;
 import com.isoft.mtax.repo.TdsCustomerRepo;
 import com.isoft.mtax.service.CustomerService;
 import com.isoft.mtax.service.MailService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
+import java.util.Map;
 
 @Service
+@Log4j2
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
@@ -27,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public TDSCustomer addTDSCustomer(TDSCustomer tdsCustomer) {
+    public TDSCustomer save(TDSCustomer tdsCustomer) {
         TDSCustomer addedTdsCustomer= tdsCustomerRepo.save(tdsCustomer);
 
          mailService.sendEmailNotification(addedTdsCustomer);
@@ -46,9 +48,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<TDSCustomer> findTdsCustomerByAddressCity(String city) {
-
-        return tdsCustomerRepo.findTdsCustomerByCity(city);
+    public List<Map<String, Object>> findTdsCustomerByAddressCity(String city) {
+       List<Map<String, Object>> list =tdsCustomerRepo.findTdsCustomerByCity(city);
+       log.info("List Of Size"+list.size());
+        return list;
     }
 
     @Override

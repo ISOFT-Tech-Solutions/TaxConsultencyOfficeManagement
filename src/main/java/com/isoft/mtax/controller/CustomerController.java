@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -34,7 +35,7 @@ public class CustomerController {
      */
     @PostMapping("/tds-customers")
     public ResponseEntity<?> addTDSCustomer(@Valid  @RequestBody TDSCustomer tdsCustomer){
-      TDSCustomer customer =customerService.addTDSCustomer(tdsCustomer);
+      TDSCustomer customer =customerService.save(tdsCustomer);
       return new ResponseEntity<>(customer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
     }
 
@@ -48,7 +49,7 @@ public class CustomerController {
         log.info("tds customer "+city);
         List<TDSCustomer> tdsCustomerList=new ArrayList<>();
         if(city!=null){
-            List<TDSCustomer> tdsCustomersByCity =customerService.findTdsCustomerByAddressCity(city);
+            List<Map<String, Object>> tdsCustomersByCity =customerService.findTdsCustomerByAddressCity(city);
             return ResponseEntity.ok(tdsCustomersByCity);
         }
         else {
