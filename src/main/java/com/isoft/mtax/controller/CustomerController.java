@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -107,12 +108,49 @@ public class CustomerController {
     /**
      * Added GST Customer
      * @param gstCustomer
-     * @return
+     * @return GST
      */
     @PostMapping("/gst-customers")
-    public ResponseEntity<?> addTDSCustomer(@RequestBody GSTCustomer gstCustomer){
+    public ResponseEntity<?> addGSTCustomer(@RequestBody GSTCustomer gstCustomer){
         GSTCustomer addedGstCustomer =customerService.addGstCustomer(gstCustomer);
         return new ResponseEntity<>(addedGstCustomer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
+    }
+
+    /**
+     * Get All GST Customer using Pagingnation
+     * based on Page and Size
+     * @param page
+     * @param size
+     * @return GST Customer List
+     */
+    @GetMapping("/gst-customers")
+    public ResponseEntity<?> allGstCustomers(
+            @RequestParam (defaultValue = "0")int page,
+            @RequestParam (defaultValue = "10") int size){
+        Page<GSTCustomer> gstCustomers=customerService.gstCustomers(page,size);
+        return new ResponseEntity<>(gstCustomers,HttpStatus.OK);
+
+    }
+
+    /**
+     * Get GST Customer based on GSTIN Number
+     * @param gstinNumber
+     * @return GST Customer
+     */
+
+    @GetMapping("/gst-customers/{gstin-number}")
+    public ResponseEntity<?> gstCustomerbasedOnGstinNumber(@PathVariable("gstin-number") String gstinNumber){
+        log.info("GSTIN Number :"+gstinNumber);
+        GSTCustomer gstCustomer=customerService.gstCustomerbasedOnGstinNumber(gstinNumber);
+        if(gstCustomer ==null){
+            ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(gstCustomer);
+    }
+    @PutMapping("/gst-customers/{id}")
+    public ResponseEntity<?> updateGstCustomer(@PathVariable Long id,@RequestBody GSTCustomer customer){
+        GSTCustomer updatedGstCustomer = customerService.updateGstCustomer(id,customer);
+        return new ResponseEntity<>(updatedGstCustomer.getCustomerName() +" : updated Succussfully",HttpStatus.OK);
     }
 
 }

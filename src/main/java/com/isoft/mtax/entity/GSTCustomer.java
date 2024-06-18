@@ -14,9 +14,7 @@ import java.util.Date;
 @Table(name = "GST_CUSTOMER")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class GSTCustomer extends Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
     private String gstinNumber;
     private String legalName;
     private String taxPayerType;

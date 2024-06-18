@@ -9,6 +9,9 @@ import com.isoft.mtax.service.CustomerService;
 import com.isoft.mtax.service.MailService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,6 +107,30 @@ public class CustomerServiceImpl implements CustomerService {
         GSTCustomer addedGstCustomer =gstCustomerRepo.save(gstCustomer);
         mailService.sendEmailNotification(addedGstCustomer);
         return gstCustomerRepo.save(gstCustomer);
+    }
+
+    @Override
+    public Page<GSTCustomer> gstCustomers(int page, int size) {
+        Pageable pageable= PageRequest.of(page,size);
+        return gstCustomerRepo.findAll(pageable);
+    }
+
+    @Override
+    public GSTCustomer gstCustomerbasedOnGstinNumber(String gstinNumber) {
+        return gstCustomerRepo.findByGstinNumber(gstinNumber);
+    }
+
+    @Override
+    public GSTCustomer updateGstCustomer(Long id, GSTCustomer customer) {
+        return gstCustomerRepo.findById(id)
+                .map(gstCustomer -> {
+                    gstCustomer.setCustomerName(customer.getCustomerName());
+                    gstCustomer.setMobile(customer.getMobile());
+                    gstCustomer.setPan(customer.getPan());
+                    gstCustomer.setEmail(customer.getEmail());
+                    return gstCustomerRepo.save(gstCustomer);
+                }).orElseThrow(()-> new ResourceNotFoundException("GST Customer Not found with id : "+id));
+
     }
 
 }

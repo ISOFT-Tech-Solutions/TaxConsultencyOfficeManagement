@@ -8,3 +8,7 @@
 -- Check created Topic
 
 ./bin/windows/kafka-topics.bat --list --bootstrap-server localhost:9092
+
+--  check group of Kafka
+
+./bin/windows/kafka-consumer-groups.bat --bootstrap-server localhost:9092 --list
