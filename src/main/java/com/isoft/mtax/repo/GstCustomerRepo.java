@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GstCustomerRepo extends JpaRepository<GSTCustomer,Long> {
+    GSTCustomer findByGstinNumber(String gstinNumber);
 }

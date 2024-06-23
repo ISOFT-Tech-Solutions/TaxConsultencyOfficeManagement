@@ -18,9 +18,7 @@ import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "tds_customer")
 public class TDSCustomer extends Customer{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
     @NotBlank(message = "TAN Number is mandatory")
     @Size(min = 10, max = 10, message = "TAN Number must be eight character")
     private String tanNumber;
