@@ -5,17 +5,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 
 @Entity
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@SuperBuilder
 @Table(name = "tds_customer")
 public class TDSCustomer extends Customer{
 
@@ -23,7 +25,7 @@ public class TDSCustomer extends Customer{
     @Size(min = 10, max = 10, message = "TAN Number must be eight character")
     private String tanNumber;
 
-    private boolean active =true;
+    private boolean active ;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id",referencedColumnName = "id")
     private Address address;

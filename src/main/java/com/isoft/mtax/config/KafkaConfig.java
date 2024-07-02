@@ -1,5 +1,6 @@
 package com.isoft.mtax.config;
 
+/*
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
@@ -14,13 +15,14 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+*/
 
 import java.util.HashMap;
 import java.util.Map;
-@EnableKafka
-@Configuration
+/*@EnableKafka*/
+/*@Configuration*/
 public class KafkaConfig {
-    @Value("${kafka.bootstrapAddress}")
+   /* @Value("${kafka.bootstrapAddress}")
     private String bootstrapServers;
 
 
@@ -56,5 +58,5 @@ public class KafkaConfig {
         return new KafkaTemplate<>(producerFactory());
     }
 
-
+*/
 }

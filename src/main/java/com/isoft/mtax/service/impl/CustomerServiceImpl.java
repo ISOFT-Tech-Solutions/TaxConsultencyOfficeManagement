@@ -1,5 +1,7 @@
 package com.isoft.mtax.service.impl;
 
+import com.isoft.mtax.dto.TdsCustomerDto;
+import com.isoft.mtax.entity.Address;
 import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 import com.isoft.mtax.exception.ResourceNotFoundException;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Log4j2
@@ -35,7 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
     public TDSCustomer save(TDSCustomer tdsCustomer) {
         TDSCustomer addedTdsCustomer= tdsCustomerRepo.save(tdsCustomer);
 
-         mailService.sendEmailNotification(addedTdsCustomer);
+         /*mailService.sendEmailNotification(addedTdsCustomer);*/
         return addedTdsCustomer;
     }
 
@@ -105,7 +108,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public GSTCustomer addGstCustomer(GSTCustomer gstCustomer) {
         GSTCustomer addedGstCustomer =gstCustomerRepo.save(gstCustomer);
-        mailService.sendEmailNotification(addedGstCustomer);
+        /*mailService.sendEmailNotification(addedGstCustomer);*/
         return gstCustomerRepo.save(gstCustomer);
     }
 
@@ -131,6 +134,43 @@ public class CustomerServiceImpl implements CustomerService {
                     return gstCustomerRepo.save(gstCustomer);
                 }).orElseThrow(()-> new ResourceNotFoundException("GST Customer Not found with id : "+id));
 
+    }
+
+    @Override
+    public TDSCustomer saveCsvTdsCustomer(TdsCustomerDto tdsCustomerDto) {
+        TDSCustomer tdsCustomer=TDSCustomer.builder()
+                .customerName(tdsCustomerDto.getCustomerName())
+                .pan(tdsCustomerDto.getPan())
+                .email(tdsCustomerDto.getEmail())
+                .mobile(tdsCustomerDto.getMobile())
+                .tanNumber(tdsCustomerDto.getTanNumber())
+                .active(tdsCustomerDto.isActive())
+                .build();
+        if(tdsCustomerDto.getAddressDto()!=null){
+            Address address=Address.builder()
+                    .city(tdsCustomerDto.getAddressDto().getCity())
+                    .state(tdsCustomerDto.getAddressDto().getState())
+                    .street(tdsCustomerDto.getAddressDto().getStreet())
+                    .country(tdsCustomerDto.getAddressDto().getCountry())
+                    .build();
+            tdsCustomer.setAddress(address);
+        }
+        TDSCustomer customer =tdsCustomerRepo.save(tdsCustomer);
+
+
+
+
+       return  customer;
+    }
+
+    @Override
+    public Optional<GSTCustomer> gstCustomerDetails(Long id) {
+        return gstCustomerRepo.findById(id);
+    }
+
+    @Override
+    public TDSCustomer tdsCustomersDetails(Long id) {
+        return tdsCustomerRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("TDS Customer Not Found"));
     }
 
 }

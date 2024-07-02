@@ -1,5 +1,8 @@
 package com.isoft.mtax.controller;
 
+import com.isoft.mtax.dto.AddressDto;
+import com.isoft.mtax.dto.TdsCustomerDto;
+import com.isoft.mtax.entity.Customer;
 import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 import com.isoft.mtax.service.CustomerService;
@@ -7,27 +10,42 @@ import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/mtax")
 @Validated
 @Log4j2
-
 public class CustomerController {
 
     @Autowired
     CustomerService customerService;
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+    @Value("${kafka.topic}")
+    private String kafkaTopic;
 
     /**
      * Added  TDS Customer
@@ -37,6 +55,8 @@ public class CustomerController {
     @PostMapping("/tds-customers")
     public ResponseEntity<?> addTDSCustomer(@Valid  @RequestBody TDSCustomer tdsCustomer){
       TDSCustomer customer =customerService.save(tdsCustomer);
+     kafkaTemplate.send(kafkaTopic,"TDS Customer "+customer.getCustomerName()+" Added Succufully ");
+
       return new ResponseEntity<>(customer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
     }
 
@@ -113,6 +133,7 @@ public class CustomerController {
     @PostMapping("/gst-customers")
     public ResponseEntity<?> addGSTCustomer(@RequestBody GSTCustomer gstCustomer){
         GSTCustomer addedGstCustomer =customerService.addGstCustomer(gstCustomer);
+        kafkaTemplate.send(kafkaTopic,"GST Customer" +addedGstCustomer.getCustomerName()+" Added Succufully ");
         return new ResponseEntity<>(addedGstCustomer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
     }
 
@@ -147,10 +168,89 @@ public class CustomerController {
         }
         return ResponseEntity.ok(gstCustomer);
     }
-    @PutMapping("/gst-customers/{id}")
+   @PutMapping("/gst-customers/{id}")
     public ResponseEntity<?> updateGstCustomer(@PathVariable Long id,@RequestBody GSTCustomer customer){
-        GSTCustomer updatedGstCustomer = customerService.updateGstCustomer(id,customer);
-        return new ResponseEntity<>(updatedGstCustomer.getCustomerName() +" : updated Succussfully",HttpStatus.OK);
+
+            GSTCustomer updatedGstCustomer = customerService.updateGstCustomer(id,customer);
+            return new ResponseEntity<>(updatedGstCustomer.getCustomerName() +" : updated Succussfully",HttpStatus.OK);
+
+        }
+        @GetMapping("/gst-customers/{id}")
+    public ResponseEntity<?> customerDetail(@PathVariable Long id){
+        Optional<GSTCustomer> gstCustomer=customerService.gstCustomerDetails(id);
+        return ResponseEntity.ok(gstCustomer.get());
+
     }
+    @GetMapping("/v2/tds-customers/{id}")
+    public ResponseEntity<?> tdsCustomerDetail(@PathVariable Long id){
+       TDSCustomer tdsCustomer=customerService.tdsCustomersDetails(id);
+        log.info("Tds Customer name "+tdsCustomer.getCustomerName());
+
+            return ResponseEntity.ok(tdsCustomer);
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+     *
+     * @param multipartFile
+     * @return
+     */
+
+    @PostMapping("/tds-customers/csv-upload")
+    public ResponseEntity<?> uploadTdsCustomerUsingCsv(@RequestParam("file") MultipartFile file)  {
+        log.info("CSV File upload");
+        TDSCustomer customer =new TDSCustomer();
+        List<String> response = new ArrayList<>();
+        try{
+            BufferedReader fileReader=new BufferedReader(new InputStreamReader(file.getInputStream()));
+            CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
+            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+            for(CSVRecord csvRecord:csvRecords){
+                TdsCustomerDto tdsCustomerDto =new TdsCustomerDto();
+                TDSCustomer tdsCustomer=new TDSCustomer();
+                tdsCustomerDto.setCustomerName(csvRecord.get("CustomerName"));
+                tdsCustomerDto.setPan(csvRecord.get("Pan"));
+                tdsCustomerDto.setEmail(csvRecord.get("Email"));
+                tdsCustomerDto.setPhoneNo(csvRecord.get("PhoneNo"));
+                tdsCustomerDto.setMobile(csvRecord.get("Mobile"));
+                tdsCustomerDto.setTanNumber(csvRecord.get("TanNumber"));
+                tdsCustomerDto.setActive(true);
+                AddressDto addressDto=new AddressDto();
+                addressDto.setCity(csvRecord.get("City"));
+                addressDto.setState(csvRecord.get("State"));
+                addressDto.setCountry(csvRecord.get("Country"));
+                tdsCustomerDto.setAddressDto(addressDto);
+
+
+                try{
+                     customer =customerService.saveCsvTdsCustomer(tdsCustomerDto);
+                     log.debug("Name "+tdsCustomerDto.getCustomerName()+" Phone Number"+tdsCustomerDto.getPhoneNo());
+                     response.add("Customer Name"+customer.getCustomerName()+" "+customer.getId()+"Phone "+customer.getPhoneNo());
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+
+                }
+
+            }
+
+        }
+        catch (IOException exception){
+            log.error(exception.fillInStackTrace());
+        }
+
+        return ResponseEntity.ok(response);
+
+
+    }
+
 
 }

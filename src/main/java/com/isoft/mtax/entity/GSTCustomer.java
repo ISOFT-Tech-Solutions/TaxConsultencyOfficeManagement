@@ -3,6 +3,7 @@ package com.isoft.mtax.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -13,7 +14,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Table(name = "GST_CUSTOMER")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@EqualsAndHashCode(callSuper=false)
 public class GSTCustomer extends Customer {
+
 
     private String gstinNumber;
     private String legalName;

@@ -1,11 +1,13 @@
 package com.isoft.mtax.service;
 
+import com.isoft.mtax.dto.TdsCustomerDto;
 import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface CustomerService {
     TDSCustomer save(TDSCustomer tdsCustomer);
@@ -31,4 +33,10 @@ public interface CustomerService {
     GSTCustomer gstCustomerbasedOnGstinNumber(String gstinNumber);
 
     GSTCustomer updateGstCustomer(Long id, GSTCustomer customer);
+
+    TDSCustomer saveCsvTdsCustomer(TdsCustomerDto tdsCustomerDto);
+
+    Optional<GSTCustomer> gstCustomerDetails(Long id);
+
+    TDSCustomer tdsCustomersDetails(Long id);
 }

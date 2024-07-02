@@ -2,14 +2,14 @@ package com.isoft.mtax.service.impl;
 
 import com.isoft.mtax.dto.EmailDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
+/*import org.springframework.kafka.annotation.KafkaListener;*/
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaCounsumerService {
-    @Autowired
+ /*   @Autowired
     private JavaMailSender mailSender;
 
     @KafkaListener(topics = "email_topic",groupId = "group_id")
@@ -33,5 +33,5 @@ public class KafkaCounsumerService {
         message.setFrom("eranjanipathak.it@gmail.com");
 
         mailSender.send(message);
-    }
+    }*/
 }

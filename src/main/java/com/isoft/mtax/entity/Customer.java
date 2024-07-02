@@ -2,16 +2,18 @@ package com.isoft.mtax.entity;
 
 import com.isoft.mtax.dto.Auditable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.core.SpringVersion;
+@MappedSuperclass
 
-@Entity
 @Data
-
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Customer extends Auditable<String> {
+
+public abstract class Customer  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,5 +27,7 @@ public abstract class Customer extends Auditable<String> {
     private String mobile;
     @Column(name = "phone_no")
     private String phoneNo;
+
+
 
 }
