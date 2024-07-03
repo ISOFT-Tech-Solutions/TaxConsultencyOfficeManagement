@@ -6,6 +6,7 @@ import com.isoft.mtax.entity.Customer;
 import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 import com.isoft.mtax.service.CustomerService;
+import com.isoft.mtax.service.UploadService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
@@ -46,6 +47,8 @@ public class CustomerController {
     private KafkaTemplate<String, String> kafkaTemplate;
     @Value("${kafka.topic}")
     private String kafkaTopic;
+    @Autowired
+    private UploadService uploadService;
 
     /**
      * Added  TDS Customer
@@ -208,46 +211,16 @@ public class CustomerController {
     public ResponseEntity<?> uploadTdsCustomerUsingCsv(@RequestParam("file") MultipartFile file)  {
         log.info("CSV File upload");
         TDSCustomer customer =new TDSCustomer();
-        List<String> response = new ArrayList<>();
-        try{
-            BufferedReader fileReader=new BufferedReader(new InputStreamReader(file.getInputStream()));
-            CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
-            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
-            for(CSVRecord csvRecord:csvRecords){
-                TdsCustomerDto tdsCustomerDto =new TdsCustomerDto();
-                TDSCustomer tdsCustomer=new TDSCustomer();
-                tdsCustomerDto.setCustomerName(csvRecord.get("CustomerName"));
-                tdsCustomerDto.setPan(csvRecord.get("Pan"));
-                tdsCustomerDto.setEmail(csvRecord.get("Email"));
-                tdsCustomerDto.setPhoneNo(csvRecord.get("PhoneNo"));
-                tdsCustomerDto.setMobile(csvRecord.get("Mobile"));
-                tdsCustomerDto.setTanNumber(csvRecord.get("TanNumber"));
-                tdsCustomerDto.setActive(true);
-                AddressDto addressDto=new AddressDto();
-                addressDto.setCity(csvRecord.get("City"));
-                addressDto.setState(csvRecord.get("State"));
-                addressDto.setCountry(csvRecord.get("Country"));
-                tdsCustomerDto.setAddressDto(addressDto);
+        List<String> savedTdsCustomer =uploadService.processTdsCustomerCSV(file);
 
-
-                try{
-                     customer =customerService.saveCsvTdsCustomer(tdsCustomerDto);
-                     log.debug("Name "+tdsCustomerDto.getCustomerName()+" Phone Number"+tdsCustomerDto.getPhoneNo());
-                     response.add("Customer Name"+customer.getCustomerName()+" "+customer.getId()+"Phone "+customer.getPhoneNo());
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-
-                }
-
-            }
+        try {
+            return ResponseEntity.ok(savedTdsCustomer);
+        }
+        catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File processing failed: " + e.getMessage());
 
         }
-        catch (IOException exception){
-            log.error(exception.fillInStackTrace());
-        }
 
-        return ResponseEntity.ok(response);
 
 
     }

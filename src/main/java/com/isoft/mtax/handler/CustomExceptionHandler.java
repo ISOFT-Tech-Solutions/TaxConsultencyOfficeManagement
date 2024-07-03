@@ -1,6 +1,5 @@
-package com.isoft.mtax.exception;
+package com.isoft.mtax.handler;
 
-import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
