@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
+/**
+ * Service class for upload Csv file for
+ * TDS Customer registration
+ */
 @Service
 public class UploadServiceImpl implements UploadService {
     @Autowired

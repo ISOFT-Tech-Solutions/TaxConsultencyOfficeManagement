@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 
 @Entity
@@ -19,6 +21,8 @@ import lombok.experimental.SuperBuilder;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @SuperBuilder
 @Table(name = "tds_customer")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TDSCustomer extends Customer{
 
     @NotBlank(message = "TAN Number is mandatory")

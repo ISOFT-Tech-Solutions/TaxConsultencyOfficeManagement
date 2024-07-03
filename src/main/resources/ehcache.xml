@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache:config
+        xmlns:ehcache="http://www.ehcache.org/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
+
+
+    <ehcache:cache alias="tdsCustomerCache">
+        <ehcache:key-type>java.lang.Long</ehcache:key-type>
+        <ehcache:value-type>com.isoft.mtax.entity.TDSCustomer</ehcache:value-type>
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">10</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">100</ehcache:heap>
+    </ehcache:cache>
+
+</ehcache:config>
