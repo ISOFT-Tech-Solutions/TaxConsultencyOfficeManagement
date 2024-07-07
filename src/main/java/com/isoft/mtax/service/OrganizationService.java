@@ -1,12 +1,12 @@
 package com.isoft.mtax.service;
 
-import com.isoft.mtax.entity.Organization;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Set;
 
+import com.isoft.mtax.dto.OrganizationDTO;
 
 public interface OrganizationService {
-    List<Organization> allOrganizations();
+
+	List<OrganizationDTO> allOrganizations();
+
+	OrganizationDTO addOrganization(OrganizationDTO org);
 }

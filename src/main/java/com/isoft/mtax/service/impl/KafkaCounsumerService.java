@@ -12,7 +12,7 @@ public class KafkaCounsumerService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @KafkaListener(topics = "email_topic",groupId = "group_id")
+    //@KafkaListener(topics = "email_topic",groupId = "group_id")
     public void consume(EmailDetails emailDetails){
         try{
             sendEmail(emailDetails);

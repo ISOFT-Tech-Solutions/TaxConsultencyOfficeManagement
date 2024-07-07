@@ -11,9 +11,11 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 @Entity
 @Table(name = "isoft_Emp")
+@Data
 public class Employee extends BaseEntity {
 
 	@Id
@@ -33,6 +35,11 @@ public class Employee extends BaseEntity {
 	@Size(max = 50)
 	@Column(name = "EMP_LAST_NAME")
 	private String empLastName;
+	
+	@NotBlank
+	@Size(max = 100)
+	@Column(name = "ORG_USERNAME")
+	private String username;
 
 	@NotBlank
 	@Size(max = 100)
@@ -55,6 +62,11 @@ public class Employee extends BaseEntity {
 	@Size(max = 100)
 	@Column(name = "EMP_PINCODE")
 	private String empPincode;
+	
+	@NotBlank
+	@Size(max = 100)
+	@Column(name = "EMP_ADDRESS")
+	private String empAddress;
 
 	@ManyToOne
 	@JoinColumn(name = "orgId")
