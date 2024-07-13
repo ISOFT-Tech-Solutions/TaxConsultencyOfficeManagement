@@ -1,19 +1,14 @@
 package com.isoft.mtax.dto;
 
-import com.isoft.mtax.entity.Address;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
 
 @Builder
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class TdsCustomerDto  {
+public class CustomerDto {
     private String customerName;
     private String pan;
     private String email;
@@ -22,9 +17,4 @@ public class TdsCustomerDto  {
     private boolean active =true;
     private AddressDto addressDto;
 
-
-    private String tanNumber;
-
-
 }
-

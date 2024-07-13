@@ -1,6 +1,7 @@
 package com.isoft.mtax.controller;
 
 import com.isoft.mtax.dto.AddressDto;
+import com.isoft.mtax.dto.GstCustomerDto;
 import com.isoft.mtax.dto.TdsCustomerDto;
 import com.isoft.mtax.entity.Customer;
 import com.isoft.mtax.entity.GSTCustomer;
@@ -17,6 +18,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -40,7 +42,6 @@ import java.util.Optional;
 @Validated
 @Log4j2
 public class CustomerController {
-
     @Autowired
     CustomerService customerService;
     @Autowired
@@ -55,36 +56,50 @@ public class CustomerController {
      * @param tdsCustomer
      * @return Added Customer Detail with Status Created
      */
-    @PostMapping("/tds-customers")
-    public ResponseEntity<?> addTDSCustomer(@Valid  @RequestBody TDSCustomer tdsCustomer){
-      TDSCustomer customer =customerService.save(tdsCustomer);
+    @PostMapping("/customers")
+    public ResponseEntity<?> addCustomer(@RequestBody Customer customer){
+      Customer savedCustomer =customerService.save(customer);
      kafkaTemplate.send(kafkaTopic,"TDS Customer "+customer.getCustomerName()+" Added Succufully ");
 
       return new ResponseEntity<>(customer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
     }
 
     /**
+     * Serch All Tds Customers
+     * @param pageable
+     * @return
+     */
+    @GetMapping("/customers/tds")
+    public ResponseEntity<?> findAllTdsCustomers(Pageable pageable){
+       Page<TDSCustomer> tdsCustomers=customerService.findAllTdsCustomers(pageable);
+       if(tdsCustomers.isEmpty()){
+           return ResponseEntity.noContent().build();
+       }
+       return ResponseEntity.ok(tdsCustomers);
+
+    }
+    /**
      * Search all TDS Customer
      * Search Customer based on City if City Request Param will be provided
      * @return TDS Customer List Data
      */
-    @GetMapping ("/tds-customers")
-    public ResponseEntity<?> tdsCustomers(@RequestParam(required = false) String city){
+    @GetMapping ("/customers/{city}")
+    public ResponseEntity<?> tdsCustomers(@PathVariable(required = false) String city){
         log.info("tds customer "+city);
-        List<TDSCustomer> tdsCustomerList=new ArrayList<>();
+        List<Customer> customerList=new ArrayList<>();
         if(city!=null){
             List<Map<String, Object>> tdsCustomersByCity =customerService.findTdsCustomerByAddressCity(city);
             return ResponseEntity.ok(tdsCustomersByCity);
         }
         else {
             log.info("In else condition");
-            tdsCustomerList=customerService.tdsCustomers();
+            customerList=customerService.tdsCustomers();
         }
-        if(tdsCustomerList.isEmpty()){
+        if(customerList.isEmpty()){
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(tdsCustomerList);
+        return ResponseEntity.ok(customerList);
     }
 
     /**
@@ -93,7 +108,7 @@ public class CustomerController {
      * @return TDSCustomer based on search cretria
      *   or an HTTP status code 204 (No Content) if no users are found
      */
-    @GetMapping("/tds-customers/{tan-number}")
+    @GetMapping("/customers/tds/{tan-number}")
     public ResponseEntity<?> tdsCustomerBasedOnTanNumber(@PathVariable("tan-number") String tanNumber) {
         log.info("tanNumber   "+tanNumber);
 
@@ -110,22 +125,22 @@ public class CustomerController {
      * @param id
      * @return
      */
-    @PutMapping("/tds-customers/{id}")
+    @PutMapping("/customers/tds/{id}")
     public ResponseEntity<?> updateTdsCustomer(@PathVariable Long id, @RequestBody TDSCustomer updatedTDSCustomer){
-        TDSCustomer updatedTdsCustomer =customerService.updateTDSCustomer(id,updatedTDSCustomer);
-        return new  ResponseEntity<>(updatedTdsCustomer,HttpStatus.OK);
+        Customer updatedCustomer =customerService.updateTDSCustomer(id,updatedTDSCustomer);
+        return new  ResponseEntity<>(updatedCustomer,HttpStatus.OK);
 
 
     }
-    @DeleteMapping("/tds-customers/{id}")
+    @DeleteMapping("/customers/tds/{id}")
     public ResponseEntity<?> deactivateTdsCustomer(@PathVariable Long id){
-        TDSCustomer tdsCustomer=customerService.deactivateTdsCustomer(id);
+        Customer tdsCustomer=customerService.deactivateTdsCustomer(id);
         return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getCustomerName()+" Deactivated Succussfully",HttpStatus.OK);
     }
-    @PutMapping("/restore/tds-customers/{id}")
+    @PutMapping("/customers/tds/restore/{id}")
     public ResponseEntity<?> restoreTdsCustomer(@PathVariable Long id){
-        TDSCustomer tdsCustomer=customerService.restoreTdsCustomer(id);
-        return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getCustomerName()+" Restored  Succussfully",HttpStatus.OK);
+        Customer customer=customerService.restoreTdsCustomer(id);
+        return new ResponseEntity<>("TDS Customer : "+customer.getCustomerName()+" Restored  Succussfully",HttpStatus.OK);
     }
 
     /**
@@ -133,11 +148,12 @@ public class CustomerController {
      * @param gstCustomer
      * @return GST
      */
-    @PostMapping("/gst-customers")
-    public ResponseEntity<?> addGSTCustomer(@RequestBody GSTCustomer gstCustomer){
-        GSTCustomer addedGstCustomer =customerService.addGstCustomer(gstCustomer);
+    @PostMapping("/customers/gst")
+    public ResponseEntity<?> addGSTCustomer(@RequestBody  GstCustomerDto gstCustomerDto){
+       /* GSTCustomer addedGstCustomer =customerService.addGstCustomer(gstCustomer);*//*
         kafkaTemplate.send(kafkaTopic,"GST Customer" +addedGstCustomer.getCustomerName()+" Added Succufully ");
-        return new ResponseEntity<>(addedGstCustomer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);
+        return new ResponseEntity<>(addedGstCustomer.getCustomerName()+"Added Succussfully and Email Send", HttpStatus.CREATED);*/
+        return null;
     }
 
     /**
@@ -147,13 +163,15 @@ public class CustomerController {
      * @param size
      * @return GST Customer List
      */
-    @GetMapping("/gst-customers")
+    @GetMapping("customers/gst")
     public ResponseEntity<?> allGstCustomers(
             @RequestParam (defaultValue = "0")int page,
             @RequestParam (defaultValue = "10") int size){
-        Page<GSTCustomer> gstCustomers=customerService.gstCustomers(page,size);
-        return new ResponseEntity<>(gstCustomers,HttpStatus.OK);
-
+       Page<GSTCustomer> gstCustomers=customerService.gstCustomers(page,size);
+       if(gstCustomers.isEmpty()){
+           return ResponseEntity.noContent().build();
+       }
+     return new ResponseEntity<>(gstCustomers,HttpStatus.OK);
     }
 
     /**
@@ -162,67 +180,63 @@ public class CustomerController {
      * @return GST Customer
      */
 
-    @GetMapping("/gst-customers/{gstin-number}")
+    @GetMapping("/customers/gst/{gstin-number}")
     public ResponseEntity<?> gstCustomerbasedOnGstinNumber(@PathVariable("gstin-number") String gstinNumber){
-        log.info("GSTIN Number :"+gstinNumber);
-        GSTCustomer gstCustomer=customerService.gstCustomerbasedOnGstinNumber(gstinNumber);
-        if(gstCustomer ==null){
-            ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(gstCustomer);
+        return null;
     }
-   @PutMapping("/gst-customers/{id}")
+   @PutMapping("/customers/gst/{id}")
     public ResponseEntity<?> updateGstCustomer(@PathVariable Long id,@RequestBody GSTCustomer customer){
 
-            GSTCustomer updatedGstCustomer = customerService.updateGstCustomer(id,customer);
-            return new ResponseEntity<>(updatedGstCustomer.getCustomerName() +" : updated Succussfully",HttpStatus.OK);
+           /* GSTCustomer updatedGstCustomer = customerService.updateGstCustomer(id,customer);
+            return new ResponseEntity<>(updatedGstCustomer.getCustomerName() +" : updated Succussfully",HttpStatus.OK);*/
+       return null;
+
 
         }
-        @GetMapping("/gst-customers/{id}")
+        @GetMapping("/customers/gst/{id}")
     public ResponseEntity<?> customerDetail(@PathVariable Long id){
-        Optional<GSTCustomer> gstCustomer=customerService.gstCustomerDetails(id);
-        return ResponseEntity.ok(gstCustomer.get());
+      /*  Optional<GSTCustomer> gstCustomer=customerService.gstCustomerDetails(id);
+        return ResponseEntity.ok(gstCustomer.get());*/
+            return null;
 
     }
-    @GetMapping("/v2/tds-customers/{id}")
+    @GetMapping("/customers/tds/{id}")
     public ResponseEntity<?> tdsCustomerDetail(@PathVariable Long id){
-       TDSCustomer tdsCustomer=customerService.tdsCustomersDetails(id);
-        log.info("Tds Customer name "+tdsCustomer.getCustomerName());
-
-            return ResponseEntity.ok(tdsCustomer);
-
-
-
+       Customer customer=customerService.customersDetails(id);
+        log.info("Tds Customer name "+customer.getCustomerName());
+            return ResponseEntity.ok(customer);
     }
-
-
-
-
-
-
-
     /**
      *
      * @param multipartFile
      * @return
      */
-
-    @PostMapping("/tds-customers/csv-upload")
-    public ResponseEntity<?> uploadTdsCustomerUsingCsv(@RequestParam("file") MultipartFile file)  {
+    @PostMapping("/customers/csv-upload")
+    public ResponseEntity<?> uploadTdsCustomerUsingCsv(@RequestParam("file") MultipartFile file,@RequestParam String type)  {
         log.info("CSV File upload");
-        TDSCustomer customer =new TDSCustomer();
-        List<String> savedTdsCustomer =uploadService.processTdsCustomerCSV(file);
+        if("tds".equalsIgnoreCase(type)) {
+            TDSCustomer customer = new TDSCustomer();
+            List<String> savedGstCustomer = uploadService.processTdsCustomerCSV(file);
 
-        try {
-            return ResponseEntity.ok(savedTdsCustomer);
+            try {
+                return ResponseEntity.ok(savedGstCustomer);
+            } catch (RuntimeException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File processing failed: " + e.getMessage());
+
+            }
+        } else if ("gst".equalsIgnoreCase(type)) {
+            log.info("Inside gst customer upload");
+            GSTCustomer gstCustomer =new GSTCustomer();
+            List<String> savedGstCustomers=uploadService.processGstCustomerCsv(file);
+            try {
+                return ResponseEntity.ok(savedGstCustomers);
+            }catch (RuntimeException re) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File processing failed: " + re.getMessage());
+            }
         }
-        catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File processing failed: " + e.getMessage());
-
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
-
-
     }
 
 

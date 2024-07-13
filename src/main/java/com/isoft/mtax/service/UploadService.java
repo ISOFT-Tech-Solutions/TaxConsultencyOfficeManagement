@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface UploadService {
     List<String> processTdsCustomerCSV(MultipartFile file);
+
+    List<String> processGstCustomerCsv(MultipartFile file);
 }

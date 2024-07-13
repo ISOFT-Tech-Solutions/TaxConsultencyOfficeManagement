@@ -14,4 +14,5 @@ public class CsvConstants {
     public static final String COUNTRY="Country";
     public static final String DEFUALTENCODING="UTF-8";
     public static final String HEADERCOUNT ="9";
+    public static final String GSTIN="Gstin";
 }

@@ -1,42 +1,48 @@
 package com.isoft.mtax.service;
 
+import com.isoft.mtax.dto.GstCustomerDto;
 import com.isoft.mtax.dto.TdsCustomerDto;
+import com.isoft.mtax.entity.Customer;
 import com.isoft.mtax.entity.GSTCustomer;
 import com.isoft.mtax.entity.TDSCustomer;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface CustomerService {
-    TDSCustomer save(TDSCustomer tdsCustomer);
+    Customer save(Customer customer);
 
 
 
-    List<TDSCustomer> tdsCustomers();
+    List<Customer> tdsCustomers();
 
     TDSCustomer tdsCustomerBasedOnTanNumber(String tanNumber);
 
     List<Map<String, Object>> findTdsCustomerByAddressCity(String city);
 
-    TDSCustomer updateTDSCustomer(Long id, TDSCustomer updatedTDSCustomer);
+    Customer updateTDSCustomer(Long id, TDSCustomer updatedTDSCustomer);
 
-    TDSCustomer deactivateTdsCustomer(Long id);
+    Customer deactivateTdsCustomer(Long id);
 
-    TDSCustomer restoreTdsCustomer(Long id);
+    Customer restoreTdsCustomer(Long id);
 
-    GSTCustomer addGstCustomer(GSTCustomer gstCustomer);
+   /* GSTCustomer addGstCustomer(GSTCustomer gstCustomer);*/
 
-    Page<GSTCustomer> gstCustomers(int page, int size);
+  Page<GSTCustomer> gstCustomers(int page, int size);
 
-    GSTCustomer gstCustomerbasedOnGstinNumber(String gstinNumber);
+  /*  GSTCustomer gstCustomerbasedOnGstinNumber(String gstinNumber);*/
 
-    GSTCustomer updateGstCustomer(Long id, GSTCustomer customer);
+   /* GSTCustomer updateGstCustomer(Long id, GSTCustomer customer);*/
 
     TDSCustomer saveCsvTdsCustomer(TdsCustomerDto tdsCustomerDto);
 
-    Optional<GSTCustomer> gstCustomerDetails(Long id);
+ /*   Optional<GSTCustomer> gstCustomerDetails(Long id);*/
 
-    TDSCustomer tdsCustomersDetails(Long id);
+    Customer customersDetails(Long id);
+
+    Page<TDSCustomer> findAllTdsCustomers(Pageable pageable);
+
+    void saveCsvGstCustomer(GstCustomerDto gstCustomer);
 }

@@ -7,32 +7,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cache;
 
+import java.io.Serializable;
 
+@SuperBuilder
 @Entity
-
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@SuperBuilder
-@Table(name = "tds_customer")
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class TDSCustomer extends Customer{
+@DiscriminatorValue("TDS")
+@Data
+public class TDSCustomer extends Customer implements Serializable {
 
-    @NotBlank(message = "TAN Number is mandatory")
-    @Size(min = 10, max = 10, message = "TAN Number must be eight character")
     private String tanNumber;
-
-    private boolean active ;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id",referencedColumnName = "id")
-    private Address address;
-
 
 }
