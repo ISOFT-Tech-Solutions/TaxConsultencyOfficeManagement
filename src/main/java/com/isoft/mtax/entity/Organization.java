@@ -14,9 +14,11 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 @Entity
 @Table(name = "Organization")
+@Data
 public class Organization extends BaseEntity {
 	@Id
 	@Column(name = "ORG_ID")
@@ -33,6 +35,12 @@ public class Organization extends BaseEntity {
 	@Email
 	@Column(name = "ORG_EMAIL")
 	private String email;
+	
+	@NotBlank
+	@Size(max = 100)
+	@Column(name = "ORG_USERNAME")
+	private String username;
+	
 
 	@NotBlank
 	@Size(max = 20)
@@ -68,7 +76,8 @@ public class Organization extends BaseEntity {
 	@Column(name = "ORG_ADDRESS")
 	private String address;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "org")
 	private Set<Employee> underEmployees;
 
 }
