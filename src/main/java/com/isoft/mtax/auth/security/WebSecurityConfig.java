@@ -45,8 +45,41 @@ public class WebSecurityConfig {
 		authProvider.setUserDetailsService(userDetailsService);
 		authProvider.setPasswordEncoder(passwordEncoder());
 
+/
+//  @Override
+//  protected void configure(HttpSecurity http) throws Exception {
+//    http.cors().and().csrf().disable()
+//      .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+//      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+//      .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+//      .antMatchers("/api/test/**").permitAll()
+//      .anyRequest().authenticated();
+//
+//    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//  }
+  
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.csrf(csrf -> csrf.disable())
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> 
+          auth.requestMatchers("/api/auth/**").permitAll()
+              .requestMatchers("/api/test/**").permitAll()
+                  .requestMatchers("/mtax/**").permitAll()
+                  .requestMatchers("/v2/mtax/**").permitAll()
+                  .requestMatchers("/error/**").permitAll()
+                  .requestMatchers("/actuator/**").permitAll()
+                  .requestMatchers("/portal/**").permitAll()
+
+              .anyRequest().authenticated()
+        );
+    
+    http.authenticationProvider(authenticationProvider());
+
 		return authProvider;
 	}
+
 
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {

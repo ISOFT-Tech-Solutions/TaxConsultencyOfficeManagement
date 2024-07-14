@@ -1,7 +1,15 @@
 -- Start Kafka Server
 ./bin/windows/kafka-server-start.bat ./config/server.properties
+
+--Stop Kafka Server
+./bin/windows/kafka-server-stop.bat ./config/server.properties
+
 --Start Zookeeper
 ./bin/windows/zookeeper-server-start.bat ./config/zookeeper.properties
+
+-- Stop Zookeeper
+./bin/windows/zookeeper-server-stop.bat ./config/zookeeper.properties
+
 
 -- Create Topic
 ./bin/windows/kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic email_topic --from-beginning
@@ -12,3 +20,19 @@
 --  check group of Kafka
 
 ./bin/windows/kafka-consumer-groups.bat --bootstrap-server localhost:9092 --list
+
+
+--  Docker command for Docker compose file
+
+
+--  Kubernates Command for run deploymewnt and Services
+## Create namespace
+kubectl create namespace isoft-tax-product
+## Apply Deployment and Service
+kubectl apply -f postgres-deployment.yml
+kubectl apply -f isoft-tax-product-deployment.yml
+kubectl apply -f service.yml
+
+## Port Forward for test localhost laptop
+kubectl port-forward pod/<pod_name> 8080:8080 -n isoft-tax-product<name_space>
+

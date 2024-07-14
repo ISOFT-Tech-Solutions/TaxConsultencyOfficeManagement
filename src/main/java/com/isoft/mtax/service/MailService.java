@@ -24,7 +24,7 @@ public class MailService {
 
         emailDetails.setSubject("Notification for "+customer.getClass().getSimpleName());
         emailDetails.setBody(text);
-        kafkaProducerService.sendMessage(emailDetails);
+       /* kafkaProducerService.sendMessage(emailDetails);*/
 
     }
 }

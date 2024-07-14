@@ -5,28 +5,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 
+@SuperBuilder
 @Entity
-
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@Table(name = "tds_customer")
-public class TDSCustomer extends Customer{
+@DiscriminatorValue("TDS")
+@Data
+public class TDSCustomer extends Customer implements Serializable {
 
-    @NotBlank(message = "TAN Number is mandatory")
-    @Size(min = 10, max = 10, message = "TAN Number must be eight character")
     private String tanNumber;
-
-    private boolean active =true;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id",referencedColumnName = "id")
-    private Address address;
-
 
 }

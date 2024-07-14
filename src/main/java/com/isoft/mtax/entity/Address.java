@@ -3,15 +3,19 @@ package com.isoft.mtax.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "Address")
+
+
 @Data
+@Builder
+@Entity
 public class Address {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,8 +30,8 @@ public class Address {
     private String state;
     @Column(name = "country")
     private String country;
-    @OneToOne(mappedBy = "address" ,cascade = CascadeType.ALL )
+    /*@OneToOne(mappedBy = "address" ,cascade = CascadeType.ALL )
     @JsonIgnore
-    private TDSCustomer tdsCustomer;
+    private Customer customer;*/
 
 }
