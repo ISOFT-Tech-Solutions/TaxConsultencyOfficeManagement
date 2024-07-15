@@ -18,4 +18,6 @@ public interface TdsFilingRepo extends JpaRepository<TdsFiling,Long> {
     Page<TdsFiling> findFilingByTdsCustomerId(@Param("customerId") Long customerId, Pageable pageable);
 
     List<TdsFiling> findAllBydueDate(LocalDate dueDate);
+    @Query("SELECT f FROM TdsFiling f WHERE f.organization.id = :orgId")
+    List<TdsFiling> findTdsFilingByOrgId(Pageable page,@Param("orgId") Long orgId);
 }

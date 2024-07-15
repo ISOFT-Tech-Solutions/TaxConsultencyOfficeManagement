@@ -38,7 +38,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/mtax")
+@RequestMapping("api/v1/customers")
 @Validated
 @Log4j2
 public class CustomerController {
@@ -56,7 +56,7 @@ public class CustomerController {
      * @param tdsCustomer
      * @return Added Customer Detail with Status Created
      */
-    @PostMapping("/customers")
+    @PostMapping("/")
     public ResponseEntity<?> addCustomer(@RequestBody Customer customer){
       Customer savedCustomer =customerService.save(customer);
      kafkaTemplate.send(kafkaTopic,"TDS Customer "+customer.getCustomerName()+" Added Succufully ");
@@ -69,7 +69,7 @@ public class CustomerController {
      * @param pageable
      * @return
      */
-    @GetMapping("/customers/tds")
+    @GetMapping("/tds")
     public ResponseEntity<?> findAllTdsCustomers(Pageable pageable){
        Page<TDSCustomer> tdsCustomers=customerService.findAllTdsCustomers(pageable);
        if(tdsCustomers.isEmpty()){
@@ -83,7 +83,7 @@ public class CustomerController {
      * Search Customer based on City if City Request Param will be provided
      * @return TDS Customer List Data
      */
-    @GetMapping ("/customers/{city}")
+    @GetMapping ("/{city}")
     public ResponseEntity<?> tdsCustomers(@PathVariable(required = false) String city){
         log.info("tds customer "+city);
         List<Customer> customerList=new ArrayList<>();
@@ -108,7 +108,7 @@ public class CustomerController {
      * @return TDSCustomer based on search cretria
      *   or an HTTP status code 204 (No Content) if no users are found
      */
-    @GetMapping("/customers/tds/{tan-number}")
+    @GetMapping("/tds/{tan-number}")
     public ResponseEntity<?> tdsCustomerBasedOnTanNumber(@PathVariable("tan-number") String tanNumber) {
         log.info("tanNumber   "+tanNumber);
 
@@ -125,19 +125,19 @@ public class CustomerController {
      * @param id
      * @return
      */
-    @PutMapping("/customers/tds/{id}")
+    @PutMapping("/tds/{id}")
     public ResponseEntity<?> updateTdsCustomer(@PathVariable Long id, @RequestBody TDSCustomer updatedTDSCustomer){
         Customer updatedCustomer =customerService.updateTDSCustomer(id,updatedTDSCustomer);
         return new  ResponseEntity<>(updatedCustomer,HttpStatus.OK);
 
 
     }
-    @DeleteMapping("/customers/tds/{id}")
+    @DeleteMapping("/tds/{id}")
     public ResponseEntity<?> deactivateTdsCustomer(@PathVariable Long id){
         Customer tdsCustomer=customerService.deactivateTdsCustomer(id);
         return new ResponseEntity<>("TDS Customer : "+tdsCustomer.getCustomerName()+" Deactivated Succussfully",HttpStatus.OK);
     }
-    @PutMapping("/customers/tds/restore/{id}")
+    @PutMapping("/tds/restore/{id}")
     public ResponseEntity<?> restoreTdsCustomer(@PathVariable Long id){
         Customer customer=customerService.restoreTdsCustomer(id);
         return new ResponseEntity<>("TDS Customer : "+customer.getCustomerName()+" Restored  Succussfully",HttpStatus.OK);
@@ -148,7 +148,7 @@ public class CustomerController {
      * @param gstCustomer
      * @return GST
      */
-    @PostMapping("/customers/gst")
+    @PostMapping("/gst")
     public ResponseEntity<?> addGSTCustomer(@RequestBody  GstCustomerDto gstCustomerDto){
        /* GSTCustomer addedGstCustomer =customerService.addGstCustomer(gstCustomer);*//*
         kafkaTemplate.send(kafkaTopic,"GST Customer" +addedGstCustomer.getCustomerName()+" Added Succufully ");
@@ -163,7 +163,7 @@ public class CustomerController {
      * @param size
      * @return GST Customer List
      */
-    @GetMapping("customers/gst")
+    @GetMapping("/gst")
     public ResponseEntity<?> allGstCustomers(
             @RequestParam (defaultValue = "0")int page,
             @RequestParam (defaultValue = "10") int size){
@@ -180,7 +180,7 @@ public class CustomerController {
      * @return GST Customer
      */
 
-    @GetMapping("/customers/gst/{gstin-number}")
+    @GetMapping("/gst/{gstin-number}")
     public ResponseEntity<?> gstCustomerbasedOnGstinNumber(@PathVariable("gstin-number") String gstinNumber){
         return null;
     }
@@ -193,14 +193,14 @@ public class CustomerController {
 
 
         }
-        @GetMapping("/customers/gst/{id}")
+        @GetMapping("/gst/{id}")
     public ResponseEntity<?> customerDetail(@PathVariable Long id){
       /*  Optional<GSTCustomer> gstCustomer=customerService.gstCustomerDetails(id);
         return ResponseEntity.ok(gstCustomer.get());*/
             return null;
 
     }
-    @GetMapping("/customers/tds/{id}")
+    @GetMapping("/tds/{id}")
     public ResponseEntity<?> tdsCustomerDetail(@PathVariable Long id){
        Customer customer=customerService.customersDetails(id);
         log.info("Tds Customer name "+customer.getCustomerName());
@@ -211,7 +211,7 @@ public class CustomerController {
      * @param multipartFile
      * @return
      */
-    @PostMapping("/customers/csv-upload")
+    @PostMapping("/csv-upload")
     public ResponseEntity<?> uploadTdsCustomerUsingCsv(@RequestParam("file") MultipartFile file,@RequestParam String type)  {
         log.info("CSV File upload");
         if("tds".equalsIgnoreCase(type)) {

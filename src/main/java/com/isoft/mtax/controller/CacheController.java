@@ -13,7 +13,7 @@ import javax.cache.CacheManager;
 import javax.persistence.EntityManagerFactory;
 
 @RestController
-@RequestMapping("/mtax/cache")
+@RequestMapping("/api/v1/caches")
 public class CacheController {
    @Autowired
    private SessionFactory sessionFactory;

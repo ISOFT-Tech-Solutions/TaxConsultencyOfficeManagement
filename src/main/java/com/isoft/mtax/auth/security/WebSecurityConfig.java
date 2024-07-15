@@ -26,7 +26,7 @@ import com.isoft.mtax.auth.security.services.UserDetailsServiceImpl;
 @EnableMethodSecurity
 
 public class WebSecurityConfig {
-	
+
 	@Autowired
 	UserDetailsServiceImpl userDetailsService;
 
@@ -35,8 +35,10 @@ public class WebSecurityConfig {
 
 	@Bean
 	AuthTokenFilter authenticationJwtTokenFilter() {
+
 		return new AuthTokenFilter();
 	}
+
 
 	@Bean
 	DaoAuthenticationProvider authenticationProvider() {
@@ -44,8 +46,13 @@ public class WebSecurityConfig {
 
 		authProvider.setUserDetailsService(userDetailsService);
 		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
 
-/
+	}
+
+
+
+
 //  @Override
 //  protected void configure(HttpSecurity http) throws Exception {
 //    http.cors().and().csrf().disable()
@@ -57,54 +64,56 @@ public class WebSecurityConfig {
 //
 //    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 //  }
-  
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.disable())
-        .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> 
-          auth.requestMatchers("/api/auth/**").permitAll()
-              .requestMatchers("/api/test/**").permitAll()
-                  .requestMatchers("/mtax/**").permitAll()
-                  .requestMatchers("/v2/mtax/**").permitAll()
-                  .requestMatchers("/error/**").permitAll()
-                  .requestMatchers("/actuator/**").permitAll()
-                  .requestMatchers("/portal/**").permitAll()
 
-              .anyRequest().authenticated()
-        );
-    
-    http.authenticationProvider(authenticationProvider());
+		/*@Bean
+		public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
+			http.csrf(csrf -> csrf.disable())
+					.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+					.authorizeHttpRequests(auth ->
+							auth.requestMatchers("/api/auth/**").permitAll()
+									.requestMatchers("/api/test/**").permitAll()
+									.requestMatchers("/mtax/**").permitAll()
+									.requestMatchers("/api/v1/**").permitAll()
+									.requestMatchers("/error/**").permitAll()
+									.requestMatchers("/actuator/**").permitAll()
+									.requestMatchers("/portal/**").permitAll()
+									.requestMatchers("/v3/api-docs/**").permitAll()
+									.requestMatchers("/swagger-ui/**").permitAll()
+									.requestMatchers("/swagger-ui.html").permitAll()
+									.anyRequest().authenticated()
+					);
+			 http.authenticationProvider(authenticationProvider());
 
-		return authProvider;
-	}
+			return http.build();
 
+		}*/
 
-	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-		return authConfig.getAuthenticationManager();
-	}
+		@Bean
+		AuthenticationManager authenticationManager (AuthenticationConfiguration authConfig) throws Exception {
+			return authConfig.getAuthenticationManager();
+		}
 
-	@Bean
-	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+		@Bean
+		PasswordEncoder passwordEncoder () {
+			return new BCryptPasswordEncoder();
+		}
 
-	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable())
-				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/error/**").permitAll().requestMatchers("/api/mtax/employees/**")
-						.hasAnyRole("ADMIN").requestMatchers("/mtax/**").hasAnyRole("ADMIN", "EMPLOYEE").anyRequest()
-						.authenticated());
+		@Bean
+		SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
+			http.csrf(csrf -> csrf.disable())
+					.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+					.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+							.requestMatchers("/error/**").permitAll().requestMatchers("/api/mtax/employees/**")
+							.hasAnyRole("ADMIN").requestMatchers("/mtax/**").hasAnyRole("ADMIN", "EMPLOYEE").anyRequest()
+							.authenticated());
 
-		http.authenticationProvider(authenticationProvider());
+			http.authenticationProvider(authenticationProvider());
 
-		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+			http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-		return http.build();
-	}
+			return http.build();
+		}
+
 }

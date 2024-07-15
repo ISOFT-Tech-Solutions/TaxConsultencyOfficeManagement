@@ -1,6 +1,6 @@
 package com.isoft.mtax.service;
 
-import com.isoft.mtax.dto.FilingDto;
+import com.isoft.mtax.dto.TdsFilingDto;
 import com.isoft.mtax.entity.Customer;
 import com.isoft.mtax.entity.TdsFiling;
 
@@ -14,11 +14,13 @@ public interface FilingService {
 
     String createFilingsForCustomer(Customer customer, TdsFiling filingRequest);
 
-    Page<FilingDto> findFilingsBasedonCustomer(Long customerId, Pageable pageable);
+    Page<TdsFilingDto> findFilingsBasedonCustomer(Long customerId, Pageable pageable);
 
     TdsFiling findFilingById(Long filingId);
 
     TdsFiling filingMarkComplete(TdsFiling filing);
 
-    List<FilingDto> dueFilingsData(String due);
+    List<TdsFilingDto> dueFilingsData(String due);
+
+    List<TdsFilingDto> allTdsFilings(Pageable page, Long orgId);
 }

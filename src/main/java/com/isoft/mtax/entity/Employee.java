@@ -14,7 +14,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
-@Table(name = "isoft_Emp")
+@Table(name = "employee")
 @Data
 public class Employee extends BaseEntity {
 
@@ -69,6 +69,6 @@ public class Employee extends BaseEntity {
 	private String empAddress;
 
 	@ManyToOne
-	@JoinColumn(name = "orgId")
+	@JoinColumn(name = "orgId" )
     Organization org;
 }

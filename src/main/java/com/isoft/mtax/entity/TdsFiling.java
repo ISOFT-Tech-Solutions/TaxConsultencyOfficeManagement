@@ -30,6 +30,10 @@ public class TdsFiling implements Serializable {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "org_id")
+    private Organization organization;
+
     @Column(name = "filing_period")
     private Date filingPeriod;
 
@@ -42,7 +46,5 @@ public class TdsFiling implements Serializable {
     @Column(name = "due_date")
     private Date dueDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rate_id")
-    private Rate rate;
+    private double tdsFileCharge;
 }

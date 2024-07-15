@@ -15,7 +15,7 @@ import com.isoft.mtax.dto.OrganizationDTO;
 import com.isoft.mtax.service.OrganizationService;
 
 @RestController
-@RequestMapping("/api/mtax")
+@RequestMapping("/api/v1")
 public class OrganizationContoller {
     @Autowired
     OrganizationService organizationService;

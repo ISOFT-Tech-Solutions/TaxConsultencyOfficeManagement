@@ -17,16 +17,16 @@ import com.isoft.mtax.dto.OrganizationDTO;
 import com.isoft.mtax.service.EmployeeService;
 
 @RestController
-@RequestMapping("/api/mtax")
+@RequestMapping("/api/v1/employees")
 public class EmployeeContoller {
     @Autowired
     EmployeeService employeeService;
-    @PostMapping("/employees")
+    @PostMapping("/")
     public ResponseEntity<?> addemployee(@RequestBody EmployeeDTO empDTO){
     	EmployeeDTO savedData = employeeService.addEmployee(empDTO);
         return new ResponseEntity<>(savedData,HttpStatus.CREATED);
     }
-    @GetMapping("/employees")
+    @GetMapping("/")
     public ResponseEntity<?> allemployees(){
         List<EmployeeDTO> employees=employeeService.allEmployees();
         return new ResponseEntity<>(employees,HttpStatus.OK);

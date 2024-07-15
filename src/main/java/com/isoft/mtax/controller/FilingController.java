@@ -1,10 +1,11 @@
 package com.isoft.mtax.controller;
 
-import com.isoft.mtax.dto.FilingDto;
+import com.isoft.mtax.dto.TdsFilingDto;
 import com.isoft.mtax.entity.Customer;
 import com.isoft.mtax.entity.TdsFiling;
 import com.isoft.mtax.service.CustomerService;
 import com.isoft.mtax.service.FilingService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mtax/filing")
+@RequestMapping("/api/v1/filings")
 @Log4j2
 public class FilingController {
     @Autowired
@@ -29,8 +30,10 @@ public class FilingController {
      * @param filingRequest
      * @return
      */
-    @PostMapping("/create")
+    @Operation(summary = "Creation of TDS Filing", description = "Creation of Filing After Every Filing for TDS Customer")
+    @PostMapping("/tds")
     public ResponseEntity<String> createFilingsForCustomer(@RequestParam Long customerId, @RequestBody TdsFiling filingRequest){
+
         log.info("Create Filing Customer");
         Customer customer=customerService.customersDetails(customerId);
         filingRequest.setTdsCustomer(customer);
@@ -41,6 +44,20 @@ public class FilingController {
          String message =filingService.createFilingsForCustomer(customer,filingRequest);
          return ResponseEntity.ok("Filing Created Succfully");
 
+    }
+
+    /**
+     * Get All Tds Filed data
+     * @param pageable
+     * @return
+     */
+    @GetMapping("/tds")
+    public ResponseEntity<List<TdsFilingDto>> tdsFilings(Pageable pageable,@RequestParam Long orgId){
+        List<TdsFilingDto> tdsFilings=  filingService.allTdsFilings(pageable,orgId);
+        if(tdsFilings.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(tdsFilings);
     }
 
     /**
@@ -55,7 +72,7 @@ public class FilingController {
         if(customer==null){
             return ResponseEntity.badRequest().body("Customer not found");
         }
-        Page<FilingDto> filings = filingService.findFilingsBasedonCustomer(customerId,pageable);
+        Page<TdsFilingDto> filings = filingService.findFilingsBasedonCustomer(customerId,pageable);
         if(filings.isEmpty()){
             return ResponseEntity.noContent().build();
         }
@@ -74,8 +91,8 @@ public class FilingController {
 
      }
      @GetMapping("/due")
-    public ResponseEntity<List<FilingDto>> dueFilings(@RequestParam String dueDate){
-         List<FilingDto> dueFilings=filingService.dueFilingsData(dueDate);
+    public ResponseEntity<List<TdsFilingDto>> dueFilings(@RequestParam String dueDate){
+         List<TdsFilingDto> dueFilings=filingService.dueFilingsData(dueDate);
          if(dueFilings.isEmpty()){
              return ResponseEntity.noContent().build();
          }
