@@ -3,9 +3,11 @@ package com.isoft.mtax.service.impl;
 import com.isoft.mtax.dto.TdsFilingDto;
 
 import com.isoft.mtax.entity.Customer;
+import com.isoft.mtax.entity.GstFiling;
 import com.isoft.mtax.entity.TdsFiling;
 import com.isoft.mtax.exception.ResourceNotFoundException;
 import com.isoft.mtax.mapper.TdsFillingMapper;
+import com.isoft.mtax.repo.GstFilingRepo;
 import com.isoft.mtax.repo.TdsFilingRepo;
 import com.isoft.mtax.service.FilingService;
 import lombok.extern.log4j.Log4j2;
@@ -25,6 +27,8 @@ public class FilingServiceImpl implements FilingService {
     private TdsFilingRepo filingRepo;
     @Autowired
     private TdsFillingMapper tdsFillingMapper;
+    @Autowired
+    private GstFilingRepo gstFilingRepo;
 
 
     public String createFilingsForCustomer(Customer customer, TdsFiling filingRequest) {
@@ -67,5 +71,20 @@ public class FilingServiceImpl implements FilingService {
     public List<TdsFilingDto> allTdsFilings(Pageable page, Long orgId) {
         List<TdsFiling> tdsFilingPage =  filingRepo.findTdsFilingByOrgId(page,orgId);
         return tdsFillingMapper.toDtoList(tdsFilingPage);
+    }
+
+    @Override
+    public GstFiling createGstFilings(GstFiling gstFiling) {
+        return gstFilingRepo.save(gstFiling);
+    }
+
+    @Override
+    public List<TdsFiling> tdsFilingDetails() {
+        return filingRepo.findAll();
+    }
+
+    @Override
+    public List<GstFiling> gstFilingDetails() {
+        return gstFilingRepo.findAll();
     }
 }

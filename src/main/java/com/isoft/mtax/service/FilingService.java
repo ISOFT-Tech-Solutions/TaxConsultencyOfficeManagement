@@ -2,6 +2,7 @@ package com.isoft.mtax.service;
 
 import com.isoft.mtax.dto.TdsFilingDto;
 import com.isoft.mtax.entity.Customer;
+import com.isoft.mtax.entity.GstFiling;
 import com.isoft.mtax.entity.TdsFiling;
 
 import org.springframework.data.domain.Page;
@@ -23,4 +24,10 @@ public interface FilingService {
     List<TdsFilingDto> dueFilingsData(String due);
 
     List<TdsFilingDto> allTdsFilings(Pageable page, Long orgId);
+
+    GstFiling createGstFilings(GstFiling gstFiling);
+
+    List<TdsFiling> tdsFilingDetails();
+
+    List<GstFiling> gstFilingDetails();
 }

@@ -2,6 +2,7 @@ package com.isoft.mtax.controller;
 
 import com.isoft.mtax.dto.TdsFilingDto;
 import com.isoft.mtax.entity.Customer;
+import com.isoft.mtax.entity.GstFiling;
 import com.isoft.mtax.entity.TdsFiling;
 import com.isoft.mtax.service.CustomerService;
 import com.isoft.mtax.service.FilingService;
@@ -10,9 +11,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -97,5 +101,22 @@ public class FilingController {
              return ResponseEntity.noContent().build();
          }
          return ResponseEntity.ok(dueFilings);
+     }
+     @PostMapping("/gst")
+    public ResponseEntity<?> createGstFilings(@RequestParam Long customerId, @RequestBody GstFiling gstFiling){
+         Customer customer=customerService.customersDetails(customerId);
+         if(customer == null){
+             return ResponseEntity.badRequest().body("Customer didn't found");
+         }
+          GstFiling createdGstFiling=filingService.createGstFilings(gstFiling);
+          if(createdGstFiling == null){
+              return ResponseEntity.badRequest().body("Gst File not created");
+
+          }
+         URI filing = ServletUriComponentsBuilder.fromCurrentRequest()
+                 .path("/{id}")
+                 .buildAndExpand(createdGstFiling.getId())
+                 .toUri();
+          return ResponseEntity.created(filing).body(createdGstFiling);
      }
 }

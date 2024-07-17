@@ -65,7 +65,7 @@ public class WebSecurityConfig {
 //    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 //  }
 
-		/*@Bean
+		@Bean
 		public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
 			http.csrf(csrf -> csrf.disable())
 					.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
@@ -87,7 +87,7 @@ public class WebSecurityConfig {
 
 			return http.build();
 
-		}*/
+		}
 
 		@Bean
 		AuthenticationManager authenticationManager (AuthenticationConfiguration authConfig) throws Exception {
@@ -99,7 +99,7 @@ public class WebSecurityConfig {
 			return new BCryptPasswordEncoder();
 		}
 
-		@Bean
+		/*@Bean
 		SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
 			http.csrf(csrf -> csrf.disable())
 					.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
@@ -114,6 +114,6 @@ public class WebSecurityConfig {
 			http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
 			return http.build();
-		}
+		}*/
 
 }

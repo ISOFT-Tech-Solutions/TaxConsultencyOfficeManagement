@@ -1,9 +1,11 @@
 package com.isoft.mtax.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
-
+@Data
 @Entity
 @Table(name = "gst_filing")
 public class GstFiling {
@@ -14,11 +16,15 @@ public class GstFiling {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private Customer gstCustomer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "org_id")
+    private Organization organization;
 
     @Column(name = "filing_period")
     private Date filingPeriod;
@@ -27,13 +33,12 @@ public class GstFiling {
     private String filingStatus;
 
     @Column(name = "filing_date")
-    private Date filingDate;
+    private LocalDate filingDate;
 
     @Column(name = "due_date")
     private Date dueDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rate_id")
-    private Rate rate;
+    private double gstFileCharge;
+
 
 }

@@ -41,7 +41,7 @@ public class TdsFiling implements Serializable {
     private String filingStatus;
 
     @Column(name = "filing_date")
-    private Date filingDate;
+    private LocalDate filingDate;
 
     @Column(name = "due_date")
     private Date dueDate;
